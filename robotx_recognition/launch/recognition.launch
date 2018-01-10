@@ -14,4 +14,8 @@
   <node name="voxelchain_input_generator_node" pkg="robotx_recognition" type="voxelchain_input_generator_node" args="" output="screen" respawn="true">
     <remap from="/voxelchain_input_generator_node/clusters" to="/euclidean_clustering_node/clusters"/>
   </node>
+
+  <node name="voxelchain_node" pkg="robotx_recognition" type="voxelchain_node.py" args="" output="screen" respawn="true">
+    <remap from="/voxelchain_node/voxelchain_input" to="/voxelchain_input_generator_node/voxelchain_input"/>
+  </node>
 </launch>
