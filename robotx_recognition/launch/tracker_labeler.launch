@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="tracker_labeler_node" pkg="robotx_recognition" type="tracker_labeler_node" args="" output="screen" respawn="true">
+    <remap from="/tracker_labeler_node/image_raw" to="/wam_v/camera/front/image_raw" />
+  </node>
+
+  <node name="rosbag_node" pkg="rosbag" type="play" args="$(find robotx_recognition)/data/front_camera.bag" output="screen" respawn="true">
+  </node>
+</launch>

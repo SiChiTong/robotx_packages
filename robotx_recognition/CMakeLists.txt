@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   tf2_ros
+  cv_bridge
+  image_transport
   robotx_msgs
 )
 
@@ -23,6 +25,8 @@ if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
+
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -129,6 +133,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -157,6 +162,10 @@ set(voxelchain_input_generator_src src/voxelchain_input_generator_node.cpp src/v
 add_executable(voxelchain_input_generator_node ${voxelchain_input_generator_src})
 add_dependencies(voxelchain_input_generator_node robotx_msgs_generate_messages_cpp)
 
+set(tracker_labeler_src src/tracker_labeler_node.cpp src/tracker_labeler.cpp)
+add_executable(tracker_labeler_node ${tracker_labeler_src})
+add_dependencies(tracker_labeler_node robotx_msgs_generate_messages_cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -171,6 +180,7 @@ add_dependencies(voxelchain_input_generator_node robotx_msgs_generate_messages_c
 target_link_libraries(object_recognition_node ${catkin_LIBRARIES})
 target_link_libraries(euclidean_clustering_node ${catkin_LIBRARIES})
 target_link_libraries(voxelchain_input_generator_node ${catkin_LIBRARIES})
+target_link_libraries(tracker_labeler_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
 ## Install ##
