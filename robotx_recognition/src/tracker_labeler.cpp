@@ -60,4 +60,5 @@ void tracker_labeler::image_callback(const sensor_msgs::ImageConstPtr& msg)
   }
   cv::imshow("tracker_labeler", cv_ptr->image);
   cv::waitKey(3);
+  tracking_target_roi_.set_anker_point(mouse_event_);
 }

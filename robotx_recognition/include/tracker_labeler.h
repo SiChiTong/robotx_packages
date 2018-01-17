@@ -3,6 +3,7 @@
 
 //headers in this package
 #include <mouse_param.h>
+#include <tracking_roi.h>
 
 //headers in ROS
 #include <ros/ros.h>
@@ -29,6 +30,7 @@ private:
   //tracker and parameters
   cv::Ptr<cv::Tracker> tracker_;
   std::string tracking_algorithm_;
+  tracking_roi tracking_target_roi_;
   //mouse callback ant parameters
   mouse_param mouse_event_;
 };

@@ -162,7 +162,7 @@ set(voxelchain_input_generator_src src/voxelchain_input_generator_node.cpp src/v
 add_executable(voxelchain_input_generator_node ${voxelchain_input_generator_src})
 add_dependencies(voxelchain_input_generator_node robotx_msgs_generate_messages_cpp)
 
-set(tracker_labeler_src src/tracker_labeler_node.cpp src/tracker_labeler.cpp)
+set(tracker_labeler_src src/tracker_labeler_node.cpp src/tracker_labeler.cpp src/tracking_roi.cpp)
 add_executable(tracker_labeler_node ${tracker_labeler_src})
 add_dependencies(tracker_labeler_node robotx_msgs_generate_messages_cpp)
 
