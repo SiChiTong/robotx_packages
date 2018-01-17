@@ -16,6 +16,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/tracking/tracker.hpp>
 
+//headers in boost
+#include <boost/optional.hpp>
+
 class tracker_labeler
 {
 public:

@@ -58,7 +58,20 @@ void tracker_labeler::image_callback(const sensor_msgs::ImageConstPtr& msg)
     ROS_ERROR("cv_bridge exception: %s", e.what());
     return;
   }
+  tracking_target_roi_.set_anker_point(mouse_event_);
+  std::vector<cv::Point> anker_points = tracking_target_roi_.get_anker_points();
+  for(auto anker_point : anker_points)
+  {
+    cv::circle(cv_ptr->image, anker_point, 5, cv::Scalar(0,255,0), 3, 4);
+  }
+  boost::optional<cv::Rect2d&> roi = tracking_target_roi_.get_roi();
+  if(roi)
+  {
+    cv::Rect2d roi_data = roi.get();
+    cv::rectangle(cv_ptr->image, cv::Point(roi_data.x,roi_data.y), cv::Point(roi_data.x+roi_data.width, roi_data.y+roi_data.height),
+      cv::Scalar(0,0,255), 3, 4);
+  }
   cv::imshow("tracker_labeler", cv_ptr->image);
   cv::waitKey(3);
-  tracking_target_roi_.set_anker_point(mouse_event_);
+
 }

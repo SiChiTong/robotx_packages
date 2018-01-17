@@ -20,6 +20,7 @@ public:
   ~tracking_roi();
   void clear_roi();
   boost::optional<cv::Rect2d&> get_roi();
+  std::vector<cv::Point> get_anker_points();
   void set_anker_point(mouse_param mouse_event);
 private:
   cv::Rect2d roi_;
