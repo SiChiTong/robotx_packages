@@ -3,6 +3,7 @@
 
 tracker_labeler::tracker_labeler():it_(nh_)
 {
+  is_tracking_ = false;
   nh_.param<std::string>(ros::this_node::getName()+"/tracking_algorithm", tracking_algorithm_, "MEDIANFLOW");
   if(tracking_algorithm_ == "MEDIANFLOW")
   {
@@ -59,17 +60,25 @@ void tracker_labeler::image_callback(const sensor_msgs::ImageConstPtr& msg)
     return;
   }
   tracking_target_roi_.set_anker_point(mouse_event_);
+  boost::optional<cv::Rect2d&> roi = tracking_target_roi_.get_roi();
+  if(is_tracking_ == true)
+  {
+    cv::Rect2d tracked_roi = roi.get();
+    tracker_->update(cv_ptr->image, tracked_roi);
+    cv::rectangle(cv_ptr->image, tracked_roi, cv::Scalar(255,0,0), 1, 1);
+  }
+  if(roi)
+  {
+    cv::Rect2d roi_data = roi.get();
+    tracker_->init(cv_ptr->image, roi_data);
+    is_tracking_ = true;
+    cv::rectangle(cv_ptr->image, cv::Point(roi_data.x,roi_data.y), cv::Point(roi_data.x+roi_data.width, roi_data.y+roi_data.height),
+      cv::Scalar(0,0,255), 3, 4);
+  }
   std::vector<cv::Point> anker_points = tracking_target_roi_.get_anker_points();
   for(auto anker_point : anker_points)
   {
     cv::circle(cv_ptr->image, anker_point, 5, cv::Scalar(0,255,0), 3, 4);
-  }
-  boost::optional<cv::Rect2d&> roi = tracking_target_roi_.get_roi();
-  if(roi)
-  {
-    cv::Rect2d roi_data = roi.get();
-    cv::rectangle(cv_ptr->image, cv::Point(roi_data.x,roi_data.y), cv::Point(roi_data.x+roi_data.width, roi_data.y+roi_data.height),
-      cv::Scalar(0,0,255), 3, 4);
   }
   cv::imshow("tracker_labeler", cv_ptr->image);
   cv::waitKey(3);

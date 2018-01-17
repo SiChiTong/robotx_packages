@@ -34,6 +34,7 @@ private:
   cv::Ptr<cv::Tracker> tracker_;
   std::string tracking_algorithm_;
   tracking_roi tracking_target_roi_;
+  volatile bool is_tracking_;
   //mouse callback ant parameters
   mouse_param mouse_event_;
 };
