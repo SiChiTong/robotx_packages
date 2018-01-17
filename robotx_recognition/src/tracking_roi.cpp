@@ -36,6 +36,7 @@ void tracking_roi::set_anker_point(mouse_param mouse_event)
       }
       if(mouse_event.flags == (cv::EVENT_FLAG_SHIFTKEY+cv::EVENT_FLAG_LBUTTON))
       {
+        is_tracking_ = false;
         clear_roi();
       }
     }

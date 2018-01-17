@@ -35,6 +35,8 @@ private:
   std::string tracking_algorithm_;
   tracking_roi tracking_target_roi_;
   volatile bool is_tracking_;
+  ros::Duration tracking_roi_lifetime_;
+  ros::Time tracking_start_time_;
   //mouse callback ant parameters
   mouse_param mouse_event_;
 };

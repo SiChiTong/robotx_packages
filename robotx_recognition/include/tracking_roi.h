@@ -22,6 +22,7 @@ public:
   boost::optional<cv::Rect2d&> get_roi();
   std::vector<cv::Point> get_anker_points();
   void set_anker_point(mouse_param mouse_event);
+  volatile bool is_tracking_;
 private:
   cv::Rect2d roi_;
   volatile bool is_mouse_pressed_;
