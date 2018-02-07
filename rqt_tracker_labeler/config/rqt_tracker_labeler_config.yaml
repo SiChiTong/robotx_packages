@@ -1,2 +1,5 @@
 rqt_tracker_labeler:
-  class: [red_buoy, green_bouy]
+  red_bouy:
+    tracking_frames: 15
+  green_bouy:
+    tracking_frames: 15

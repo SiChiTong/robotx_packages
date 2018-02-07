@@ -46,6 +46,7 @@ class RqtTrackerLabelerPlugin(Plugin):
         #self._widget.okButton.clicked[bool].connect(self._handle_ok_clicked)
         self._widget.pushButton_load_setting.clicked[bool].connect(self._handle_push_button_load_setting_clicked)
         self._widget.pushButton_load_rosbag_files.clicked[bool].connect(self._handle_load_rosbag_files_clicked)
+        self._widget.pushButton_save_working_data.clicked[bool].connect(self._save_working_data_clicked)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
@@ -67,6 +68,9 @@ class RqtTrackerLabelerPlugin(Plugin):
         paramlist = rosparam.load_file(file_path[0])
         for params, ns in paramlist:
             rosparam.upload_params(ns,params)
+
+    def _save_working_data_clicked(self):
+        file_path = QFileDialog.getExistingDirectory(None, 'Open file to load', directory=rospkg.RosPack().get_path('rqt_tracker_labeler'))
 
     def _handle_load_rosbag_files_clicked(self):
         file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=os.path.expanduser('~'),filter="ROSBAG File (*.bag)")

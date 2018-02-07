@@ -365,6 +365,32 @@
      <string>Load ROSBAG File</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_save_working_data">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>310</y>
+      <width>161</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save Working Data</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_generate_dataset">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>380</y>
+      <width>181</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Generate Dataset</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
