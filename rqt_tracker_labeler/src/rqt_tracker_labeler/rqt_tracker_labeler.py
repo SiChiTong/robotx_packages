@@ -6,11 +6,17 @@ import rosparam
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget,QFileDialog
+
+from object_class import ObjectClass
+from image_dataset import ImageDataset
 #from python_qt_binding import QtGui
 
 class RqtTrackerLabelerPlugin(Plugin):
     def __init__(self, context):
         super(RqtTrackerLabelerPlugin, self).__init__(context)
+        self.__working_dir = ""
+        self.__object_class_datas = []
+        self.__image_datasets = []
         # Give QObjects reasonable names
         self.setObjectName('RqtTrackerLabelerPlugin')
 
@@ -46,7 +52,7 @@ class RqtTrackerLabelerPlugin(Plugin):
         #self._widget.okButton.clicked[bool].connect(self._handle_ok_clicked)
         self._widget.pushButton_load_setting.clicked[bool].connect(self._handle_push_button_load_setting_clicked)
         self._widget.pushButton_load_rosbag_files.clicked[bool].connect(self._handle_load_rosbag_files_clicked)
-        self._widget.pushButton_save_working_data.clicked[bool].connect(self._save_working_data_clicked)
+        self._widget.pushButton_set_save_dir.clicked[bool].connect(self._set_save_dir_clicked)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
@@ -65,12 +71,21 @@ class RqtTrackerLabelerPlugin(Plugin):
     def _handle_push_button_load_setting_clicked(self):
         file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=rospkg.RosPack().get_path('rqt_tracker_labeler'),
             filter="YAML File (*.yaml)")
-        paramlist = rosparam.load_file(file_path[0])
-        for params, ns in paramlist:
-            rosparam.upload_params(ns,params)
+        if file_path[0] != u'':
+            paramlist = rosparam.load_file(file_path[0])
+            del self.__object_class_datas[:]
+            for params, ns in paramlist:
+                rosparam.upload_params(ns,params)
+                key_values = params['rqt_tracker_labeler'].keys()
+                for key_value in key_values:
+                    params['rqt_tracker_labeler'][key_value]
+                    self.__object_class_datas.append(ObjectClass(key_value,params['rqt_tracker_labeler'][key_value]['object_id'],
+                        params['rqt_tracker_labeler'][key_value]['tracking_frames']))
 
-    def _save_working_data_clicked(self):
-        file_path = QFileDialog.getExistingDirectory(None, 'Open file to load', directory=rospkg.RosPack().get_path('rqt_tracker_labeler'))
+    def _set_save_dir_clicked(self):
+        self.__working_dir = QFileDialog.getExistingDirectory(None, 'Open file to load',
+            directory=rospkg.RosPack().get_path('rqt_tracker_labeler'))
 
     def _handle_load_rosbag_files_clicked(self):
         file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=os.path.expanduser('~'),filter="ROSBAG File (*.bag)")
+        self.__image_datasets.append(ImageDataset(file_path[0]))

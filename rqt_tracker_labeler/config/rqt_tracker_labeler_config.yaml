@@ -1,5 +1,7 @@
 rqt_tracker_labeler:
   red_bouy:
     tracking_frames: 15
+    object_id: 0
   green_bouy:
     tracking_frames: 15
+    object_id: 1
