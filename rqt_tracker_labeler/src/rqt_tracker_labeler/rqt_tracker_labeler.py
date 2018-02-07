@@ -1,12 +1,12 @@
 import os
 import rospy
 import rospkg
+import rosparam
 
 from qt_gui.plugin import Plugin
-#from PyQt5 import QtCore, QtGui
-#from PyQt5.QtWidgets import QWidget
 from python_qt_binding import loadUi
-from python_qt_binding.QtWidgets import QWidget
+from python_qt_binding.QtWidgets import QWidget,QFileDialog
+#from python_qt_binding import QtGui
 
 class RqtTrackerLabelerPlugin(Plugin):
     def __init__(self, context):
@@ -44,6 +44,8 @@ class RqtTrackerLabelerPlugin(Plugin):
         context.add_widget(self._widget)
         #self._widget.cancelButton.clicked[bool].connect(self._handle_cancel_clicked)
         #self._widget.okButton.clicked[bool].connect(self._handle_ok_clicked)
+        self._widget.pushButton_load_setting.clicked[bool].connect(self._handle_push_button_load_setting_clicked)
+        self._widget.pushButton_load_rosbag_files.clicked[bool].connect(self._handle_load_rosbag_files_clicked)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
@@ -58,3 +60,13 @@ class RqtTrackerLabelerPlugin(Plugin):
         # TODO restore intrinsic configuration, usually using:
         # v = instance_settings.value(k)
         pass
+
+    def _handle_push_button_load_setting_clicked(self):
+        file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=rospkg.RosPack().get_path('rqt_tracker_labeler'),
+            filter="YAML File (*.yaml)")
+        paramlist = rosparam.load_file(file_path[0])
+        for params, ns in paramlist:
+            rosparam.upload_params(ns,params)
+
+    def _handle_load_rosbag_files_clicked(self):
+        file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=os.path.expanduser('~'),filter="ROSBAG File (*.bag)")

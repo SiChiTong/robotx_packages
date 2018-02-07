@@ -1,0 +1,2 @@
+rqt_tracker_labeler:
+  class: [red_buoy, green_bouy]
