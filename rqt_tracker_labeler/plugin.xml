@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="rqt_tracker_labeler" type="rqt_tracker_labeler.rqt_tracker_labeler.RqtTrackerLabelerPlugin" base_class_type="rqt_gui_py::Plugin" >
+    <description>
+      Python GUI for labeling images.
+    </description>
+    <qtgui>
+      <group>
+        <label>RobotX</label>
+        <icon type="file">resource/ouxt.png</icon>
+      </group>
+      <label>RqtTrackerLabelerPlugin</label>
+        <icon type="file">resource/rqt_tracker_labeler.png</icon>
+      <statustip>Python GUI for labeling images.</statustip>
+    </qtgui>
+  </class>
+</library>
