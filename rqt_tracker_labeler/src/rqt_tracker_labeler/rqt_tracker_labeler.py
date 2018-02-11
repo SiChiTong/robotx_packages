@@ -5,8 +5,8 @@ import rosparam
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
-from python_qt_binding.QtWidgets import QWidget,QFileDialog
-from python_qt_binding.QtGui import QImage
+from python_qt_binding.QtWidgets import QWidget,QFileDialog,QGraphicsPixmapItem,QGraphicsScene
+from python_qt_binding.QtGui import QImage,QPixmap
 
 from object_class import ObjectClass
 from image_dataset import ImageDataset
@@ -69,6 +69,20 @@ class RqtTrackerLabelerPlugin(Plugin):
         # v = instance_settings.value(k)
         pass
 
+    def update_images(self):
+        print "hi"
+
+    def show_first_image(self):
+        images = self.__image_datasets[0].images
+        if(len(images) != 0):
+            first_image = images[0][0]
+            height, width, dim = first_image.shape
+            pixmap = QPixmap(QImage(images[0][0].data, width, height, dim * width, QImage.Format_RGB888))
+            item = QGraphicsPixmapItem(pixmap)
+            scene = QGraphicsScene()
+            scene.addItem(item)
+            self._widget.graphicsView.setScene(scene)
+
     def _handle_push_button_load_setting_clicked(self):
         file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=rospkg.RosPack().get_path('rqt_tracker_labeler'),
             filter="YAML File (*.yaml)")
@@ -94,13 +108,10 @@ class RqtTrackerLabelerPlugin(Plugin):
     def _handle_load_rosbag_files_clicked(self):
         file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=os.path.expanduser('~'),filter="ROSBAG File (*.bag)")
         num_images = 0
-        self.qimages = []
         self.__image_datasets.append(ImageDataset(file_path[0]))
         for image_dataset in self.__image_datasets:
             for topic_images in image_dataset.images:
-                topic_qimages = []
                 for image in topic_images:
                     height, width, dim = image.shape
-                    topic_qimages.append(QImage(image.data, width, height, dim * width, QImage.Format_RGB888))
                     num_images = num_images + 1
-                self.qimages.append(topic_images)
+        self.show_first_image()

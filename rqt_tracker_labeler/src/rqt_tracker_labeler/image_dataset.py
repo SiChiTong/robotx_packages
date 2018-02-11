@@ -47,7 +47,8 @@ class ImageDataset:
             for read_topic in read_topic_list:
                 topic_images = []
                 for topic, msg, t in bag.read_messages(topics=read_topic):
-                    topic_images.append(bridge.imgmsg_to_cv2(msg, "bgr8"))
+                    img = cv2.cvtColor(bridge.imgmsg_to_cv2(msg, "bgr8"),cv2.COLOR_BGR2RGB)
+                    topic_images.append(img)
                 images.append(topic_images)
         bag.close()
         return images
