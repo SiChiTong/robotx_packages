@@ -6,6 +6,7 @@ import rosparam
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget,QFileDialog
+from python_qt_binding.QtGui import QImage
 
 from object_class import ObjectClass
 from image_dataset import ImageDataset
@@ -74,13 +75,17 @@ class RqtTrackerLabelerPlugin(Plugin):
         if file_path[0] != u'':
             paramlist = rosparam.load_file(file_path[0])
             del self.__object_class_datas[:]
+            self._widget.comboBox_class_name.clear()
+            object_classes = []
             for params, ns in paramlist:
                 rosparam.upload_params(ns,params)
                 key_values = params['rqt_tracker_labeler'].keys()
                 for key_value in key_values:
-                    params['rqt_tracker_labeler'][key_value]
+                    object_classes.append(key_value)
+                    #params['rqt_tracker_labeler'][key_value]
                     self.__object_class_datas.append(ObjectClass(key_value,params['rqt_tracker_labeler'][key_value]['object_id'],
                         params['rqt_tracker_labeler'][key_value]['tracking_frames']))
+            self._widget.comboBox_class_name.addItems(object_classes)
 
     def _set_save_dir_clicked(self):
         self.__working_dir = QFileDialog.getExistingDirectory(None, 'Open file to load',
@@ -88,4 +93,14 @@ class RqtTrackerLabelerPlugin(Plugin):
 
     def _handle_load_rosbag_files_clicked(self):
         file_path = QFileDialog.getOpenFileName(None, 'Open file to load', directory=os.path.expanduser('~'),filter="ROSBAG File (*.bag)")
+        num_images = 0
+        self.qimages = []
         self.__image_datasets.append(ImageDataset(file_path[0]))
+        for image_dataset in self.__image_datasets:
+            for topic_images in image_dataset.images:
+                topic_qimages = []
+                for image in topic_images:
+                    height, width, dim = image.shape
+                    topic_qimages.append(QImage(image.data, width, height, dim * width, QImage.Format_RGB888))
+                    num_images = num_images + 1
+                self.qimages.append(topic_images)

@@ -1,8 +1,9 @@
 import rosbag
 import cv2
 from sensor_msgs.msg import Image
-from python_qt_binding.QtWidgets import QDialog,QCheckBox,QHBoxLayout,QPushButton
+from python_qt_binding.QtWidgets import QDialog,QCheckBox,QHBoxLayout,QPushButton,QProgressBar
 from python_qt_binding import QtCore
+from cv_bridge import CvBridge, CvBridgeError
 
 class ImageDataset:
     def __init__(self,rosbag_file_path):
@@ -16,6 +17,7 @@ class ImageDataset:
         self.dialog = QDialog(None)
         layout = QHBoxLayout()
         self.check_box_list = []
+        self.check_box_result = []
         for topic in topic_lists:
             self.check_box_list.append(QCheckBox(topic))
         for check_box in self.check_box_list:
@@ -25,13 +27,30 @@ class ImageDataset:
         layout.addWidget(push_button)
         self.dialog.setLayout(layout)
         self.dialog.exec_()
+        for check_box in self.check_box_list:
+            self.check_box_result.append(check_box.checkState())
+        read_topic_list = []
+        for i in range(len(topic_lists)):
+            if self.check_box_result[i] == 2:
+                read_topic_list.append(topic_lists[i])
+        self.images = self.read_images(read_topic_list, rosbag_file_path)
         bag.close()
 
     def __button_pressed(self):
-        self.dialog.destroy()
+        self.dialog.close()
 
-    def __checked(self, int):
-        print "hi"
+    def read_images(self, read_topic_list, rosbag_file_path):
+        images = []
+        bag = rosbag.Bag(rosbag_file_path)
+        bridge = CvBridge()
+        if len(read_topic_list) != 0:
+            for read_topic in read_topic_list:
+                topic_images = []
+                for topic, msg, t in bag.read_messages(topics=read_topic):
+                    topic_images.append(bridge.imgmsg_to_cv2(msg, "bgr8"))
+                images.append(topic_images)
+        bag.close()
+        return images
 
 if __name__ == '__main__':
     pass
